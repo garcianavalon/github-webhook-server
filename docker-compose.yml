@@ -1,0 +1,9 @@
+version: '2'
+services:
+  github-webhook-server:
+    build: .
+    image: garcianavalon/github-webhook-server
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: [nodemon, ./bin/www]
