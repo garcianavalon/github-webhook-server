@@ -6,4 +6,7 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+    ports:
+      - 3000:3000
+    # nodemon for live reloading in development
     command: [nodemon, ./bin/www]
