@@ -13,12 +13,29 @@ router.post('/test', function(req, res) {
   res.json(req.body);
 });
 
+const _buildUrl = function(baseUrl) {
+  const TOKEN = process.env.GITHUB_OAUTH_TOKEN || '';
+  if (TOKEN){
+    console.log('Using github oauth token');
+    return `https://${TOKEN}@${baseUrl.split('https://')[1]}`;
+  }
+
+  const PASSWORD = process.env.BITBUCKET_APP_PASSWORD || '';
+  const USERNAME = process.env.BITBUCKET_USERNAME || '';
+  if (USERNAME && PASSWORD){
+    console.log('Using bitbucket username and app password');
+    return `https://${USERNAME}:${PASSWORD}@${baseUrl.split('https://')[1]}`;
+  }
+
+  console.log('Using base remote url with no extra auth');
+  return baseUrl;
+};
+
 /* perform a git pull in the configured folder */
 router.post('/auto-pull', function(req, res) {
   console.log('Received a POST to /webhooks/auto-pull with payload ', req.body);
   const FOLDER = process.env.AUTO_PULL_FOLDER || './';
-  let TOKEN = process.env.GITHUB_OAUTH_TOKEN || '';
-  if (TOKEN) TOKEN += '@';
+
   cmd.get(
       `
           cd ${FOLDER}
@@ -26,7 +43,7 @@ router.post('/auto-pull', function(req, res) {
       `,
       function(remoteUrl){
         console.log(`Executed git config --get remote.origin.url in ${FOLDER}, result: ${remoteUrl}`);
-        const url = `https://${TOKEN}${remoteUrl.split('https://')[1]}`;
+        const url = _buildUrl(remoteUrl);
         console.log(`URL with token ${url}`);
         cmd.get(
           `
