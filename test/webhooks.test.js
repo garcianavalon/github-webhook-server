@@ -8,12 +8,14 @@ describe('webhooks.js', function() {
 
   let req, res;
 
+  beforeEach(function () {
+    req = reqres.req({ method: 'POST', url: '/test', body: { event: 'mocha test!' } });
+    res = reqres.res();
+  });
+
   describe('/test', function() {
 
-    beforeEach(function () {
-      req = reqres.req({ method: 'POST', url: '/test', body: { event: 'mocha test!' } });
-      res = reqres.res();
-    });
+    
 
     it('works', function(done){
       webhooks.handle(req, res);
