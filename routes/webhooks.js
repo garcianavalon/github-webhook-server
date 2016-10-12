@@ -44,7 +44,7 @@ router.post('/auto-pull', function(req, res) {
       function(remoteUrl){
         console.log(`Executed git config --get remote.origin.url in ${FOLDER}, result: ${remoteUrl}`);
         const url = _buildUrl(remoteUrl);
-        console.log(`URL with token ${url}`);
+        console.log(`URL ${url}`);
         cmd.get(
           `
               git pull ${url}
