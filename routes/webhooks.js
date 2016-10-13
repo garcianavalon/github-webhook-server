@@ -80,7 +80,7 @@ router.post('/start-bat', function(req, res){
     console.log('child process exited with code ' + code);
   });
 
-  return res.send(`Started ${path}$\{batFile}`);
+  return res.send(`Started ${path}\\${batFile}`);
 });
 
 module.exports = router;
