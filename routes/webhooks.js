@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const cmd = require('node-cmd');
+const spawn = require('child_process').spawn;
 
 /* CONFIGURE YOUR WEBHOOKS HERE */
 
@@ -55,6 +56,31 @@ router.post('/auto-pull', function(req, res) {
           });      
       }
   );
+});
+
+router.post('/start-bat', function(req, res){
+  const batFile = process.env.BAT_FILE || '';
+  const path = process.env.BAT_PATH || '';
+
+  if (!batFile || !path) {
+    return res.send('ERROR: there is no bat file and/or path configured');
+  }
+
+  const ls = spawn('cmd.exe', [path, batFile]);
+
+  ls.stdout.on('data', function (data) {
+    console.log('stdout: ' + data);
+  });
+
+  ls.stderr.on('data', function (data) {
+    console.log('stderr: ' + data);
+  });
+
+  ls.on('exit', function (code) {
+    console.log('child process exited with code ' + code);
+  });
+
+  return res.send(`Started ${path}$\{batFile}`);
 });
 
 module.exports = router;
